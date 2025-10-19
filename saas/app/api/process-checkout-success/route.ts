@@ -764,6 +764,13 @@ export async function POST(request: NextRequest) {
         
         console.log(`Creating credit grant for SuperAI Core flow... Units: ${creditUnits}`);
         
+        // Calculate expiry date - 1 year from now
+        const expiryDate = new Date();
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+        const expiresAtTimestamp = Math.floor(expiryDate.getTime() / 1000); // Convert to Unix timestamp in seconds
+        
+        console.log(`Credit grant expiry date: ${expiryDate.toISOString()} (timestamp: ${expiresAtTimestamp})`);
+        
         const creditGrantBody = new URLSearchParams({
           'amount[custom_pricing_unit][id]': 'cpu_test_61TT5XePmbXQBegOk16T5kls95SQJJF9DR1pbaQwq4ye', // SuperAI custom unit
           'amount[custom_pricing_unit][value]': creditUnits,
@@ -771,7 +778,8 @@ export async function POST(request: NextRequest) {
           'applicability_config[scope][price_type]': 'metered',
           'category': 'paid',
           'customer': customer.id,
-          'name': 'Purchased Credits'
+          'name': 'Purchased Credits',
+          'expires_at': expiresAtTimestamp.toString()
         });
         
         const creditGrantResponse = await fetch('https://api.stripe.com/v1/billing/credit_grants', {

@@ -42,6 +42,10 @@ export default function SuccessCorePage() {
   const [invoiceAmount, setInvoiceAmount] = useState<number>(100000);
   const [creditAmount, setCreditAmount] = useState<number>(500000);
   const [topUpSubmitting, setTopUpSubmitting] = useState(false);
+  const [ai1Modal, setAi1Modal] = useState(false);
+  const [ai1Date, setAi1Date] = useState(() => new Date().toISOString().slice(0,10));
+  const [ai1Events, setAi1Events] = useState<number | ''>('');
+  const [ai1Submitting, setAi1Submitting] = useState(false);
 
   useEffect(() => {
     const run = async () => {
@@ -269,8 +273,9 @@ export default function SuccessCorePage() {
                   <span>Input Usage</span>
                 </div>
                 <div className="rounded-xl p-6 border-2 border-gray-300" style={{ backgroundColor: 'white' }}>
-                  <div className="flex justify-center">
+                  <div className="flex justify-center gap-4">
                     <button className="action bg-blue-700 text-white hover:bg-blue-800" onClick={() => setOpenAiModal(true)}>Input Events</button>
+                    <button className="action bg-green-600 text-white hover:bg-green-700" onClick={() => setAi1Modal(true)}>Input AI-1 Token</button>
                   </div>
                 </div>
               </section>
@@ -297,7 +302,7 @@ export default function SuccessCorePage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <div className="flex justify_between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Record Event38 usage</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Record SuperAI usage</h2>
               <button
                 onClick={() => !openAiSubmitting && setOpenAiModal(false)}
                 className="text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
@@ -325,7 +330,7 @@ export default function SuccessCorePage() {
                   });
                   const json = await resp.json();
                   if (!resp.ok || !json.success) {
-                    throw new Error(json.error || 'Failed to register Event38 usage');
+                    throw new Error(json.error || 'Failed to register SuperAI usage');
                   }
                   setOpenAiModal(false);
                   setOpenAiEvents('');
@@ -347,7 +352,7 @@ export default function SuccessCorePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Event38</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">SuperAI</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -458,6 +463,94 @@ export default function SuccessCorePage() {
                   disabled={topUpSubmitting}
                 >
                   {topUpSubmitting ? 'Submitting...' : 'Submit'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* AI-1 Token Modal */}
+      {ai1Modal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <div className="flex justify_between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Record AI-1 Token usage</h2>
+              <button
+                onClick={() => !ai1Submitting && setAi1Modal(false)}
+                className="text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
+                disabled={ai1Submitting}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (ai1Events === '' || !Number.isFinite(Number(ai1Events))) return;
+                try {
+                  setAi1Submitting(true);
+                  const resp = await fetch('/api/meter-ai1', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      customerId,
+                      date: ai1Date,
+                      value: Number(ai1Events)
+                    })
+                  });
+                  const json = await resp.json();
+                  if (!resp.ok || !json.success) {
+                    throw new Error(json.error || 'Failed to register AI-1 Token usage');
+                  }
+                  setAi1Modal(false);
+                  setAi1Events('');
+                } catch (err) {
+                  console.error(err);
+                } finally {
+                  setAi1Submitting(false);
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={ai1Date}
+                  onChange={(e) => setAi1Date(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">AI-1 Token</label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={ai1Events}
+                  onChange={(e) => setAi1Events(e.target.value === '' ? '' : Number(e.target.value))}
+                  min={0}
+                  step={1}
+                  required
+                />
+              </div>
+              <div className="flex space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => !ai1Submitting && setAi1Modal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md"
+                  disabled={ai1Submitting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md disabled:bg-gray-400"
+                  disabled={ai1Submitting}
+                >
+                  {ai1Submitting ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
             </form>
