@@ -1,0 +1,26 @@
+<svg width="1600" height="120" xmlns="http://www.w3.org/2000/svg">
+  <!-- White background -->
+  <rect width="1600" height="120" fill="#ffffff"/>
+  
+  <!-- SuperAI Logo/Text -->
+  <text x="50" y="70" font-family="Arial, sans-serif" font-size="32" font-weight="700" fill="#1f2937">
+    Super<tspan fill="#8b5cf6">AI</tspan>
+  </text>
+  
+  <!-- Navigation Menu -->
+  <g font-family="Arial, sans-serif" font-size="16" fill="#4b5563">
+    <text x="470" y="67">Models</text>
+    <text x="563" y="67">Solutions</text>
+    <text x="680" y="67">Applications</text>
+    <text x="820" y="67">Deployment</text>
+    <text x="967" y="67">Resources</text>
+    <text x="1082" y="67">Company</text>
+  </g>
+  
+  <!-- Contact us button -->
+  <g>
+    <rect x="1394" y="38" width="156" height="44" rx="22" fill="#8b5cf6"/>
+    <text x="1435" y="67" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#ffffff">Contact us</text>
+  </g>
+</svg>
+
