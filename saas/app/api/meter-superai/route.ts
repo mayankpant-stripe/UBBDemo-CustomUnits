@@ -16,12 +16,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Convert date string to Unix timestamp
-    let createdTimestamp: number | undefined;
+    // Convert date string to Unix timestamp (as string)
+    let createdTimestamp: string | undefined;
     if (date) {
       const dateObj = new Date(date);
       if (!isNaN(dateObj.getTime())) {
-        createdTimestamp = Math.floor(dateObj.getTime() / 1000);
+        createdTimestamp = String(Math.floor(dateObj.getTime() / 1000));
       }
     }
 
