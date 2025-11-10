@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const customerId: string | undefined = body?.customerId;
     const valueRaw: number | string | undefined = body?.value;
-    const date: string | undefined = body?.date; // optional (ignored)
+    const date: string | undefined = body?.date;
 
     const valueNum = Number(valueRaw);
     if (!customerId || !Number.isFinite(valueNum)) {
@@ -16,11 +16,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Convert date string to Unix timestamp
+    let createdTimestamp: number | undefined;
+    if (date) {
+      const dateObj = new Date(date);
+      if (!isNaN(dateObj.getTime())) {
+        createdTimestamp = Math.floor(dateObj.getTime() / 1000);
+      }
+    }
+
     const options = {
       event_name: 'Event AI-1',
       payload: {
         stripe_customer_id: customerId,
-        value: String(valueNum)
+        value: String(valueNum),
+        ...(createdTimestamp && { created: createdTimestamp })
       }
     } as Record<string, any>;
 
