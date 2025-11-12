@@ -456,7 +456,7 @@ export async function POST(request: NextRequest) {
       // Step 2 - Get pricing plan details  
       const pricingPlanId = session.metadata?.pricing_plan_id 
         || (flowType === 'superai_pro_custom_credits_flow'
-              ? 'bpp_test_61TT60NzJkaRemjh216T5kls95SQJJF9DR1pbaQwq7rc' // SuperAI Pro plan
+              ? 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y' // SuperAI Pro plan
               : 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK'); // SuperAI Core plan
       
       console.log('Getting SuperAI pricing plan details for:', pricingPlanId);
@@ -827,7 +827,7 @@ export async function POST(request: NextRequest) {
       billing: {
         cadenceId: cadence.id,
         pricingPlanId: (session.metadata?.pricing_plan_id || (isSuperAIProFlow 
-          ? 'bpp_test_61TT60NzJkaRemjh216T5kls95SQJJF9DR1pbaQwq7rc' 
+          ? 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y' 
           : 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK')),
         billingIntentId: finalSubscription.id,
         status: finalSubscription.status,

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         'test_clock': testClock.id,
         'metadata[created_via]': 'superai_custom_credits_flow',
         'metadata[plan]': 'superai_pro_plan',
-        'metadata[pricing_plan_id]': 'bpp_test_61TT60NzJkaRemjh216T5kls95SQJJF9DR1pbaQwq7rc',
+        'metadata[pricing_plan_id]': 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y',
         'metadata[test_clock_id]': testClock.id,
         'metadata[timestamp]': new Date().toISOString(),
         'invoice_settings[custom_fields][0][name]': 'PO Number',
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
         customer_name: name,
         customer_email: email,
         plan: 'superai_pro_plan',
-        pricing_plan_id: 'bpp_test_61TT60NzJkaRemjh216T5kls95SQJJF9DR1pbaQwq7rc',
+        pricing_plan_id: 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y',
         test_clock_id: testClock.id,
         flow_type: 'superai_pro_custom_credits_flow'
       },
