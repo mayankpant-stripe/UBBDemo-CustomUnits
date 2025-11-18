@@ -7,7 +7,7 @@ interface StarterPaymentModalProps {
   onClose: () => void;
   onSuccess: (data: { customerId: string; billingIntentId?: string; subscriptionId?: string; testClockId?: string }) => void;
   onError: (error: string) => void;
-  planType?: 'superai-core' | 'superai-pro';
+  planType?: 'superai-core' | 'superai-pro' | 'enterprise';
 }
 
 const StarterPaymentModal: React.FC<StarterPaymentModalProps> = ({ 
@@ -39,6 +39,8 @@ const StarterPaymentModal: React.FC<StarterPaymentModalProps> = ({
         apiEndpoint = '/api/superai-custom-credits-flow';
       } else if (planType === 'superai-core') {
         apiEndpoint = '/api/create-superai-core-flow';
+      } else if (planType === 'enterprise') {
+        apiEndpoint = '/api/create-superai-enterprise-flow';
       } else {
         onError('Unknown plan type');
         return;
@@ -97,6 +99,12 @@ const StarterPaymentModal: React.FC<StarterPaymentModalProps> = ({
           title: 'SuperAI Core Plan',
           price: '$100,000',
           features: ['500,000 SuperAI Credits', 'No-code visual workflow builder', '2000+ apps', 'Customer support']
+        };
+      case 'enterprise':
+        return {
+          title: 'SuperAI Enterprise Plan',
+          price: 'Custom',
+          features: ['1,000,000 SuperAI Credits', 'Dedicated account manager', 'Custom integrations', 'Priority support', 'SLA guarantee']
         };
       default:
         return {

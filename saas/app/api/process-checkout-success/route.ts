@@ -450,14 +450,16 @@ export async function POST(request: NextRequest) {
     let invoiceId;
     let creditGrantId;
 
-    if (flowType === 'superai_pro_custom_credits_flow' || flowType === 'superai_core_custom_credits_flow') {
-      // SuperAI-Pro/SuperAI-Core flow: Get pricing plan details and create billing intent
+    if (flowType === 'superai_pro_custom_credits_flow' || flowType === 'superai_core_custom_credits_flow' || flowType === 'superai_enterprise_custom_credits_flow') {
+      // SuperAI-Pro/SuperAI-Core/SuperAI-Enterprise flow: Get pricing plan details and create billing intent
       
       // Step 2 - Get pricing plan details  
       const pricingPlanId = session.metadata?.pricing_plan_id 
         || (flowType === 'superai_pro_custom_credits_flow'
               ? 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y' // SuperAI Pro plan
-              : 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK'); // SuperAI Core plan
+              : flowType === 'superai_core_custom_credits_flow'
+              ? 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK' // SuperAI Core plan
+              : 'bpp_test_61TeLpk36MZRGgydI16T5kls95SQJJF9DR1pbaQwq7js'); // SuperAI Enterprise plan
       
       console.log('Getting SuperAI pricing plan details for:', pricingPlanId);
       
@@ -813,10 +815,13 @@ export async function POST(request: NextRequest) {
 
     // Prepare response for SuperAI flows
     const isSuperAIProFlow = flowType === 'superai_pro_custom_credits_flow';
+    const isSuperAICoreFlow = flowType === 'superai_core_custom_credits_flow';
+    const isSuperAIEnterpriseFlow = flowType === 'superai_enterprise_custom_credits_flow';
+    const planName = isSuperAIProFlow ? 'Pro' : isSuperAICoreFlow ? 'Core' : 'Enterprise';
     
     return NextResponse.json({
       success: true,
-      message: `Customer ${customerName || customer.name} successfully subscribed to SuperAI ${isSuperAIProFlow ? 'Pro' : 'Core'} Plan!`,
+      message: `Customer ${customerName || customer.name} successfully subscribed to SuperAI ${planName} Plan!`,
       customer: {
         id: customer.id,
         name: customerName || customer.name,
@@ -828,7 +833,9 @@ export async function POST(request: NextRequest) {
         cadenceId: cadence.id,
         pricingPlanId: (session.metadata?.pricing_plan_id || (isSuperAIProFlow 
           ? 'bpp_test_61Tbv07vzXUduHgcu16T5kls95SQJJF9DR1pbaQwqC9Y' 
-          : 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK')),
+          : isSuperAICoreFlow 
+          ? 'bpp_test_61TT5XipfJUNx6zyd16T5kls95SQJJF9DR1pbaQwqFmK' 
+          : 'bpp_test_61TeLpk36MZRGgydI16T5kls95SQJJF9DR1pbaQwq7js')),
         billingIntentId: finalSubscription.id,
         status: finalSubscription.status,
         ...(invoiceId && { invoiceId }),

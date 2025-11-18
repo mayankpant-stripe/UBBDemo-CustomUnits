@@ -12,7 +12,7 @@ export default function NewHackPage() {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | ''>('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'superai-core' | 'superai-pro'>('superai-pro');
+  const [selectedPlan, setSelectedPlan] = useState<'superai-core' | 'superai-pro' | 'enterprise'>('superai-pro');
   const [isUsageOpen, setIsUsageOpen] = useState(false);
   const [usageCustomerId, setUsageCustomerId] = useState('');
   const [usageDate, setUsageDate] = useState(() => new Date().toISOString().slice(0,10));
@@ -54,7 +54,7 @@ export default function NewHackPage() {
       const data = await response.json();
 
       if (data.success) {
-        const planName = selectedPlan === 'superai-pro' ? 'SuperAI Pro' : 'SuperAI Core';
+        const planName = selectedPlan === 'superai-pro' ? 'SuperAI Pro' : selectedPlan === 'superai-core' ? 'SuperAI Core' : 'SuperAI Enterprise';
         const customerId = data.customerId || data.customer?.id;
         const subscriptionId = data.subscriptionId || data.billing?.billingIntentId;
         const testClockInfo = data.testClock ? `, Test Clock: ${data.testClock.id}` : '';
@@ -86,9 +86,16 @@ export default function NewHackPage() {
     setMessageType('');
   };
 
+  const handleEnterpriseClick = () => {
+    setSelectedPlan('enterprise');
+    setIsModalOpen(true);
+    setMessage('');
+    setMessageType('');
+  };
+
 
   const handleModalSuccess = (data: { customerId: string; billingIntentId?: string; subscriptionId?: string; testClockId?: string }) => {
-    const planName = selectedPlan === 'superai-pro' ? 'SuperAI Pro' : 'SuperAI Core';
+    const planName = selectedPlan === 'superai-pro' ? 'SuperAI Pro' : selectedPlan === 'superai-core' ? 'SuperAI Core' : 'SuperAI Enterprise';
     const subscriptionId = data.subscriptionId || data.billingIntentId;
     const testClockInfo = data.testClockId ? `, Test Clock: ${data.testClockId}` : '';
     setMessage(`Success! Customer created and subscribed to ${planName} plan. Customer ID: ${data.customerId}, Subscription ID: ${subscriptionId}${testClockInfo}`);
@@ -236,10 +243,11 @@ export default function NewHackPage() {
               </div>
               <div className="text-gray-500 text-sm mb-6">Growing business together</div>
               <button
+                onClick={handleEnterpriseClick}
                 disabled={isProcessing}
                 className="w-full h-12 bg-[#2A0148] hover:bg-[#3a0166] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-full transition-colors duration-200 shadow-md"
                 >             
-                SuperAI Enterprise
+                {isProcessing ? 'Processing...' : 'SuperAI Enterprise'}
               </button>
               <div className="text-gray-700 text-sm mt-6">For organizations running critical business processes with automation</div>
             </div>
