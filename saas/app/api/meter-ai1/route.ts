@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Records AI-1 token usage to Stripe Billing v2 meter events with event name "Event AI-1"
+// Records AI4 events to Stripe Billing v2 meter events with event name "AI4"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const customerId: string | undefined = body?.customerId;
     const valueRaw: number | string | undefined = body?.value;
     const date: string | undefined = body?.date;
+    const type: string | undefined = body?.type;
 
     const valueNum = Number(valueRaw);
     if (!customerId || !Number.isFinite(valueNum)) {
@@ -26,10 +27,11 @@ export async function POST(request: NextRequest) {
     }
 
     const options = {
-      event_name: 'Event AI-1',
+      event_name: 'AI4',
       payload: {
         stripe_customer_id: customerId,
         value: String(valueNum),
+        ...(type && { type }),
         ...(createdTimestamp && { created: createdTimestamp })
       }
     } as Record<string, any>;

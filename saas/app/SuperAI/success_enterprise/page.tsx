@@ -29,6 +29,7 @@ export default function SuccessEnterprisePage() {
   const [openAiModal, setOpenAiModal] = useState(false);
   const [openAiDate, setOpenAiDate] = useState(() => new Date().toISOString().slice(0,10));
   const [openAiEvents, setOpenAiEvents] = useState<number | ''>('');
+  const [openAiType, setOpenAiType] = useState<'account' | 'pg' | 'object'>('account');
   const [openAiSubmitting, setOpenAiSubmitting] = useState(false);
   const [grokModal, setGrokModal] = useState(false);
   const [grokDate, setGrokDate] = useState(() => new Date().toISOString().slice(0,10));
@@ -45,6 +46,7 @@ export default function SuccessEnterprisePage() {
   const [ai1Modal, setAi1Modal] = useState(false);
   const [ai1Date, setAi1Date] = useState(() => new Date().toISOString().slice(0,10));
   const [ai1Events, setAi1Events] = useState<number | ''>('');
+  const [ai1Type, setAi1Type] = useState<'basic' | 'advanced'>('basic');
   const [ai1Submitting, setAi1Submitting] = useState(false);
 
   useEffect(() => {
@@ -275,7 +277,7 @@ export default function SuccessEnterprisePage() {
                 <div className="rounded-xl p-6 border-2 border-gray-300" style={{ backgroundColor: 'white' }}>
                   <div className="flex justify-center gap-4">
                     <button className="action bg-blue-700 text-white hover:bg-blue-800" onClick={() => setOpenAiModal(true)}>Input AI3 events</button>
-                    <button className="action bg-green-600 text-white hover:bg-green-700" onClick={() => setAi1Modal(true)}>Input AI4 token</button>
+                    <button className="action bg-green-600 text-white hover:bg-green-700" onClick={() => setAi1Modal(true)}>Input AI4 events</button>
                   </div>
                 </div>
               </section>
@@ -325,7 +327,8 @@ export default function SuccessEnterprisePage() {
                     body: JSON.stringify({
                       customerId,
                       date: openAiDate,
-                      value: Number(openAiEvents)
+                      value: Number(openAiEvents),
+                      type: openAiType
                     })
                   });
                   const json = await resp.json();
@@ -334,6 +337,7 @@ export default function SuccessEnterprisePage() {
                   }
                   setOpenAiModal(false);
                   setOpenAiEvents('');
+                  setOpenAiType('account');
                 } catch (err) {
                   console.error(err);
                 } finally {
@@ -350,6 +354,19 @@ export default function SuccessEnterprisePage() {
                   value={openAiDate}
                   onChange={(e) => setOpenAiDate(e.target.value)}
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={openAiType}
+                  onChange={(e) => setOpenAiType(e.target.value as 'account' | 'pg' | 'object')}
+                  required
+                >
+                  <option value="account">account</option>
+                  <option value="pg">pg</option>
+                  <option value="object">object</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">AI3 events</label>
@@ -470,12 +487,12 @@ export default function SuccessEnterprisePage() {
         </div>
       )}
 
-      {/* AI4 Token Modal */}
+      {/* AI4 Events Modal */}
       {ai1Modal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
             <div className="flex justify_between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Record AI4 token usage</h2>
+              <h2 className="text-2xl font-bold text-gray-900">Record AI4 events usage</h2>
               <button
                 onClick={() => !ai1Submitting && setAi1Modal(false)}
                 className="text-gray-400 hover:text-gray-600 disabled:cursor-not-allowed"
@@ -498,15 +515,17 @@ export default function SuccessEnterprisePage() {
                     body: JSON.stringify({
                       customerId,
                       date: ai1Date,
-                      value: Number(ai1Events)
+                      value: Number(ai1Events),
+                      type: ai1Type
                     })
                   });
                   const json = await resp.json();
                   if (!resp.ok || !json.success) {
-                    throw new Error(json.error || 'Failed to register AI4 token usage');
+                    throw new Error(json.error || 'Failed to register AI4 events usage');
                   }
                   setAi1Modal(false);
                   setAi1Events('');
+                  setAi1Type('basic');
                 } catch (err) {
                   console.error(err);
                 } finally {
@@ -525,7 +544,19 @@ export default function SuccessEnterprisePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">AI4 token</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                  value={ai1Type}
+                  onChange={(e) => setAi1Type(e.target.value as 'basic' | 'advanced')}
+                  required
+                >
+                  <option value="basic">basic</option>
+                  <option value="advanced">advanced</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">AI4 events</label>
                 <input
                   type="number"
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
