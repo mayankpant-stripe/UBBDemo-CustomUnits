@@ -26,14 +26,30 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Determine event name based on whether type is provided
+    // If type is provided: use 'AI3' meter (with type field)
+    // If no type: use 'Event SuperAI' meter (without type field)
+    const hasType = type && type.trim() !== '';
+    const event_name = hasType ? 'AI3' : 'Event SuperAI';
+
+    // Build payload
+    const payload: Record<string, any> = {
+      stripe_customer_id: customerId,
+      value: String(valueNum)
+    };
+
+    // Only add type field if it was provided (for AI3 events)
+    if (hasType) {
+      payload.type = type;
+    }
+
+    if (createdTimestamp) {
+      payload.created = createdTimestamp;
+    }
+
     const options = {
-      event_name: 'AI3',
-      payload: {
-        stripe_customer_id: customerId,
-        value: String(valueNum),
-        ...(type && { type }),
-        ...(createdTimestamp && { created: createdTimestamp })
-      }
+      event_name,
+      payload
     } as Record<string, any>;
 
     // Note: occurred_at is not supported in your environment, so we do not send it

@@ -39,14 +39,9 @@ export async function POST(request: NextRequest) {
       value: String(numericValue)
     };
     
-    // Always set type field - required by Stripe
+    // Only include type and system fields if systemVariable is defined
     if (systemVariable) {
       payload.type = systemVariable;
-    } else {
-      payload.type = 'default';
-    }
-
-    if (systemVariable) {
       payload.system = systemVariable;
     }
 
